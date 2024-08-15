@@ -41,6 +41,9 @@ out/
 .*.swo
 .*.swp
 
+# VS Code
+.vscode/
+
 # emacs
 *~
 \#*\#

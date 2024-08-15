@@ -13,8 +13,14 @@ from newsdataapi import NewsDataApiClient
 # ==== FUNCTIONS ====
 # ===================
 
-def request_news(api_key: str) -> pd.DataFrame:
-    """
+def request_news(api_key: str, max_result: int=2) -> pd.DataFrame:
+    """Request news in english language
+
+    Args:
+        api_key (str): API key used to request the news from NewsDataAPI
+        max_result (int): Maximum number of results to request
+    Returns:
+        df_news (pd.DataFrame): Articles saved in a dataframe
     """
     # Create a NewsData API client
     client = NewsDataApiClient(apikey=api_key)
@@ -27,7 +33,11 @@ def request_news(api_key: str) -> pd.DataFrame:
     # Loop over countries
     for country_code in country_codes:
         # Fetch the news
-        response = client.news_api(country=country_code, language=language)
+        response = client.news_api(
+            country=country_code,
+            language=language,
+            max_result=max_result
+        )
 
         # Process the response
         if 'status' in response and response['status'] == 'success':
@@ -38,6 +48,18 @@ def request_news(api_key: str) -> pd.DataFrame:
         else:
             print("Failed to retrieve data:", response.get('message', 'Unknown Error'))
     # Put all the articles in a dataframe
-    news_df = pd.DataFrame(all_articles)
+    df_news = pd.DataFrame(all_articles)
 
-    return news_df
+    return df_news
+
+
+def set_date_format(df: pd.DataFrame) -> pd.DataFrame:
+    """Reformat date such that the time is dropped and just the date is kept
+
+    Args:
+        df (pd.DataFrame): Input dataframe
+    Returns:
+        df (pd.DataFrame): Output dataframe with the publication date set to datetime
+    """
+    df['pubDate'] = pd.to_datetime(df['pubDate'])
+    return df

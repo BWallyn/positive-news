@@ -63,3 +63,25 @@ def set_date_format(df: pd.DataFrame) -> pd.DataFrame:
     """
     df['pubDate'] = pd.to_datetime(df['pubDate'])
     return df
+
+
+def set_string_columns(df: pd.DataFrame, cat_columns: list[str]) -> pd.DataFrame:
+    """Set the categorical columns to string types
+
+    Args:
+        df (pd.DataFrame): Input dataframe
+    Returns:
+        df (pd.DataFrame): Output dataframe
+    """
+    for feat in cat_columns:
+        df[feat] = df[feat].astype(str)
+    return df
+
+
+def drop_unavailable_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    """
+    return df.drop(columns=[
+        "content", "ai_tag", "sentiment",
+       "sentiment_stats", "ai_region", "ai_org",
+    ])

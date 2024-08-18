@@ -7,6 +7,8 @@ from kedro.pipeline import Pipeline, node, pipeline
 
 from .nodes import (
     drop_unavailable_columns,
+    drop_unnecessary_columns,
+    rename_columns,
     request_news,
     set_date_format,
     set_string_columns,
@@ -29,8 +31,14 @@ def create_pipeline(**kwargs) -> Pipeline:
                 name="remove_unavailable_columns"
             ),
             node(
+                func=drop_unnecessary_columns,
+                inputs=["df_news_without_unavailable_cols", "params:data_engineering.cols_to_remove"],
+                outputs="df_news_without_unnecessary_cols",
+                name="remove_unnecessary_columns"
+            ),
+            node(
                 func=set_date_format,
-                inputs="df_news_without_unavailable_cols",
+                inputs="df_news_without_unnecessary_cols",
                 outputs="df_news_date_format",
                 name="set_date_format"
             ),
@@ -39,7 +47,15 @@ def create_pipeline(**kwargs) -> Pipeline:
                 inputs=["df_news_date_format", "params:data_engineering.cat_columns"],
                 outputs="df_news_string_cols",
                 name="set_string_columns_format"
+            ),
+            node(
+                func=rename_columns,
+                inputs="df_news_string_cols",
+                outputs="df_news_cols_renamed",
+                name="rename_column_names"
             )
         ],
-        outputs="df_news_string_cols"
+        outputs="df_news_cols_renamed",
+        namespace="data_engineering",
+        parameters=["data_engineering.max_results", "data_engineering.cols_to_remove", "data_engineering.cat_columns"]
     )

@@ -8,3 +8,5 @@
 data_engineering.max_results: 2
 
 data_engineering.cat_columns: ["country", "category"]
+
+data_engineering.cols_to_remove: ["video_url", "image_url", "source_priority", "source_icon"]

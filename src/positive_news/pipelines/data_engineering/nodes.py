@@ -23,6 +23,7 @@ def request_news(api_key: str, max_result: int=2) -> pd.DataFrame:
     Returns:
         df_news (pd.DataFrame): Articles saved in a dataframe
     """
+    #TODO update credentials load for Kedro
     # Create a NewsData API client
     client = NewsDataApiClient(apikey=api_key)
 

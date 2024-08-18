@@ -3,3 +3,8 @@
 #
 # Documentation for this file format can be found in "Parameters"
 # Link: https://docs.kedro.org/en/0.19.7/configuration/parameters.html
+
+
+data_engineering.max_results: 2
+
+data_engineering.cat_columns: ["country", "category"]

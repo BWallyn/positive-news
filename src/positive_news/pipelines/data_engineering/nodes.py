@@ -6,6 +6,7 @@ generated using Kedro 0.19.7
 # ==== IMPORTS ====
 # =================
 
+import hopsworks
 import pandas as pd
 from newsdataapi import NewsDataApiClient
 
@@ -79,9 +80,34 @@ def set_string_columns(df: pd.DataFrame, cat_columns: list[str]) -> pd.DataFrame
 
 
 def drop_unavailable_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """
+    """Drop unavailable columns when not using the paid version of NewsDataAPI
+
+    Args:
+        df (pd.DataFrame): Input dataframe
+    Returns:
+        (pd.DataFrame): Output dataframe
     """
     return df.drop(columns=[
         "content", "ai_tag", "sentiment",
        "sentiment_stats", "ai_region", "ai_org",
     ])
+
+
+def login_to_feature_store():
+    """
+    """
+    project = hopsworks.login()
+    return project.get_feature_store()
+
+
+def send_data_to_feature_store(fs, df: pd.DataFrame, version: int) -> None:
+    """
+    """
+    # Put articles in feature store
+    fs_news = fs.get_or_create_feature_group(
+        name="news_articles",
+        version=version,
+        primary_key=['article_id'],
+        description="News articles dataset"
+    )
+    fs_news.insert(df)

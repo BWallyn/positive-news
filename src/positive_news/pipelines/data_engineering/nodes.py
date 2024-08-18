@@ -94,15 +94,35 @@ def drop_unavailable_columns(df: pd.DataFrame) -> pd.DataFrame:
     ])
 
 
-def login_to_feature_store():
+def drop_unnecessary_columns(df: pd.DataFrame, cols_to_remove: list[str]) -> pd.DataFrame:
+    """Drop unnecessary columns
+
+    Args:
+        df (pd.DataFrame): Input dataframe
+        cols_to_remove (list[str]): List of the columns to remove
+    Returns:
+        (pd.DataFrame): Output dataframe
     """
+    return df.drop(columns=cols_to_remove)
+
+
+def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Rename columns
     """
-    project = hopsworks.login()
+    return df.rename(columns={
+        "pubDate": "publication_date"
+    })
+
+
+def login_to_feature_store(**kwargs):
+    """Login to the Hopsworks' feature store
+    """
+    project = hopsworks.login(**kwargs)
     return project.get_feature_store()
 
 
 def send_data_to_feature_store(fs, df: pd.DataFrame, version: int) -> None:
-    """
+    """Send data to the feature store
     """
     # Put articles in feature store
     fs_news = fs.get_or_create_feature_group(
